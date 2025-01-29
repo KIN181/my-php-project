@@ -8,14 +8,14 @@ class Sample {
     }
 
     public function hello($hello) {
-        echo "world";
+        echo "konnichiwa";
         $aisatsu = $hello;
         echo $aisatsu;
     }
 }
 
-$sample = new Sample(1234556);
+$sample = new Sample(393939);
 
-$sample->hello(567);
+$sample->hello(123);
 
 ?>
