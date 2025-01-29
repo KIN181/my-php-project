@@ -1,11 +1,42 @@
-version: "3.9"
+version: '3.8'
 services:
-  app:
+  php-app:
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
       - ./public:/var/www/html
     ports:
-      - "8080:80"
-    container_name: php-app
+      - "8081:80"
+    depends_on:
+      mysql:
+        condition: service_healthy   # MySQLの準備が整うまで待機
+    networks:
+      - mynetwork
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword  # ルートパスワードを設定
+      MYSQL_DATABASE: mydatabase         # 使用するデータベースを指定
+      MYSQL_USER: user                  # ユーザー名
+      MYSQL_PASSWORD: userpassword      # ユーザーパスワード
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - mynetwork
+    ports:
+      - "3306:3306"  # ローカルでアクセスするためのポートを開放
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  mysql-data:
