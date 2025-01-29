@@ -14,8 +14,8 @@ class Sample {
     }
 }
 
-$sample = new Sample(393939);
+$sample = new Sample(454545);
 
-$sample->hello(123);
+$sample->hello(5678);
 
 ?>
