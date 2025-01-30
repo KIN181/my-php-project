@@ -9,7 +9,7 @@ class User {
     }
 
     public function getUsers() {
-        return $this->db->fetchUsers(); // 修正: fetchfUsers => fetchUsers
+        return $this->db->fetchUsers(); 
     }
 }
 
