@@ -13,7 +13,6 @@ class Db {
         if ($this->conn->connect_error) {
             die("接続失敗: " . $this->conn->connect_error);
         }
-        echo "接続成功!";
     }
 
     public function getConnection() {
