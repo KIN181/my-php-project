@@ -1,11 +1,13 @@
 <?php
+use Model\UserModel;
+
 require_once "../Model/userModel.php";
 
 class User {
     private $db;
 
     public function __construct() {
-        $this->db = new Db();
+        $this->db = new  UserModel();
     }
 
     public function getUsers() {
