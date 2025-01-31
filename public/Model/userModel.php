@@ -1,4 +1,8 @@
 <?php
+namespace Model;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
 class Db {
     private $servername = "mysql";  
     private $username = "user";     
@@ -7,7 +11,7 @@ class Db {
     private $conn;
 
     public function __construct() {
-        $this->conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
+        $this->conn = new \mysqli($this->servername, $this->username, $this->password, $this->dbname);
         
         // 接続チェック
         if ($this->conn->connect_error) {
@@ -19,19 +23,41 @@ class Db {
         return $this->conn;
     }
 
-    public function fetchUsers() {
-        $sql = "SELECT * FROM users";
-        $result = $this->conn->query($sql);
-
-        if ($result->num_rows > 0) {
-            return $result->fetch_all(MYSQLI_ASSOC);
-        } else {
-            return [];
-        }
-    }
-
     public function __destruct() {
-        $this->conn->close();  // 括弧を追加
+        $this->conn->close();
     }
 }
-?>
+
+class UserModel {
+    private $db;
+
+    public function __construct() {
+        $this->db = new Db();
+    }
+
+    public function saveUrl($url) {
+        $conn = $this->db->getConnection();
+
+        // プリペアドステートメントでSQLインジェクション対策
+        $stmt = $conn->prepare("INSERT INTO urls (url) VALUES (?)");
+        $stmt->bind_param("s", $url);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    public function fetchUrls() {
+        $conn = $this->db->getConnection();
+        $sql = "SELECT * FROM urls ORDER BY created_at DESC";
+        $result = $conn->query($sql);
+
+        return ($result->num_rows > 0) ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    }
+
+    public function fetchUsers() {
+        $conn = $this->db->getConnection();
+        $sql = "SELECT * FROM users";
+        $result = $conn->query($sql);
+
+        return ($result->num_rows > 0) ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    }
+}
